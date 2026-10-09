@@ -15,7 +15,7 @@ if($hit){ git reset -q; Fail "시크릿으로 의심되는 내용이 있어 중�
 
 $n = (git diff --cached --name-only | Measure-Object).Count
 $now = Get-Date -Format 'yyyy-MM-dd HH:mm'
-git commit -q -m "커푸기: $n개 파일 변경 ($now)"
+git commit -q -m "커푸기: ${n}개 파일 변경 ($now)"
 if($LASTEXITCODE -ne 0){ Fail "commit 실패" }
 $hash = git rev-parse --short HEAD
 $summary = (git show --stat --oneline --no-color HEAD | Select-Object -Skip 1 | Select-Object -Last 1).Trim()
@@ -23,7 +23,7 @@ $summary = (git show --stat --oneline --no-color HEAD | Select-Object -Skip 1 | 
 $log = Join-Path $PSScriptRoot 'CHANGELOG.md'
 $old = if(Test-Path $log){ Get-Content $log -Raw -Encoding UTF8 } else { "# CHANGELOG`n`n" }
 $head = "# CHANGELOG`n`n"; $body = if($old.StartsWith($head)){ $old.Substring($head.Length) } else { $old }
-[IO.File]::WriteAllText($log, $head + "- $now / $hash / $n개 파일, $summary`n" + $body, (New-Object Text.UTF8Encoding $false))
+[IO.File]::WriteAllText($log, $head + "- $now / $hash / ${n}개 파일, $summary`n" + $body, (New-Object Text.UTF8Encoding $false))
 git add CHANGELOG.md
 git commit -q -m "기록: CHANGELOG ($hash)"
 
